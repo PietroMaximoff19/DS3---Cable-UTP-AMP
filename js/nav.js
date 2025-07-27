@@ -133,6 +133,16 @@ function initializeSlidingBackground() {
         return;
     }
     
+    // Detectar si es dispositivo móvil
+    const isMobile = window.innerWidth <= 768 || ('ontouchstart' in window);
+    
+    if (isMobile) {
+        console.log('Mobile device detected, disabling hover effects');
+        // Ocultar el elemento deslizante en móvil
+        slidingBg.style.display = 'none';
+        return;
+    }
+    
     console.log('Initializing sliding background with', navbarItems.length, 'items');
     
     navbarItems.forEach((item, index) => {
@@ -280,8 +290,22 @@ function addDynamicStyles() {
             transition: all 0.3s ease;
         }
         
-        .navbar-item:hover {
-            transform: translateY(-1px);
+        /* Hover effects solo en desktop */
+        @media (min-width: 769px) {
+            .navbar-item:hover {
+                transform: translateY(-1px);
+            }
+        }
+        
+        /* Deshabilitar hover en móvil */
+        @media (max-width: 768px) {
+            .navbar-item:hover {
+                transform: none;
+            }
+            
+            #sliding-background {
+                display: none !important;
+            }
         }
         
         #sliding-background {
@@ -294,4 +318,21 @@ function addDynamicStyles() {
 
     `;
     document.head.appendChild(style);
+    
+    // Agregar listener para cambios de tamaño de ventana
+    window.addEventListener('resize', handleResize);
+}
+
+// Función para manejar cambios de tamaño de ventana
+function handleResize() {
+    const slidingBg = document.getElementById('sliding-background');
+    const isMobile = window.innerWidth <= 768 || ('ontouchstart' in window);
+    
+    if (slidingBg) {
+        if (isMobile) {
+            slidingBg.style.display = 'none';
+        } else {
+            slidingBg.style.display = 'block';
+        }
+    }
 }
